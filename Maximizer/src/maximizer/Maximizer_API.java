@@ -5,6 +5,7 @@
  */
 package maximizer;
 
+import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -49,17 +50,31 @@ public class Maximizer_API {
     //      computation time. We may only neet the fitness part.
     
     // Get fittest individual of current run (children)
-    private double[] getFittestIndividual()
+    private int getFittestIndex()
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int fittestIndex = 0;
+        double bestFitnes = Double.MIN_VALUE;
+        double currentFitness;
+        
+        for (int i = 0; i < children.length; i++) {
+            currentFitness = getFitness(children[i]);
+            if (currentFitness>bestFitnes)
+            {
+                fittestIndex = i;
+                bestFitnes = currentFitness;
+            }
+        }
+        
+        return fittestIndex;
     }
     
     // Get fitness of individual
-    // Get the fitness by simply returning the value after plugging in the
-    // solution parameters into the equation and seeing how good it is.
+    // Returns the value after plugging in the solution parameters into the 
+    // equation.
     private double getFitness(double [] solution)
     {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return (21.5 + (solution[0] * Math.sin(4 * Math.PI * solution[0])) + 
+                (solution[1] * Math.sin(20 * Math.PI * solution[1])));
     }
     
     ////////////////////////////////////////////////////////////////////////////
