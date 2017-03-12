@@ -16,8 +16,9 @@ public class Maximizer_API {
     private double[][] parents;
     private double[][] children;
     private double mutationInitialStepSize;
+    private double[] mutationStepSize;
     private int terminationCount;
-    private double nNumber; // n variable in problem to calculate learning rate
+    private int nNumber; // number of parameters (basically)
     private double overallLearningRate;
     private double coordinateLearningRate;
     
@@ -39,9 +40,25 @@ public class Maximizer_API {
     }
     
     //Uncorrelated mutation with n step sizes
+    //Input:    double array with n parameters
+    //Output:   modified input
+    //Accepts an individual and mutates each parameter using the methods from
+    //page 76 in the book.
     private double[] mutate(double [] individual)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Random r = new Random();
+        double ithNormal;
+        double[] newIndividual = new double[individual.length];
+        //mutate each parameter
+        for (int i = 0; i < getnNumber(); i++) {
+            ithNormal = r.nextGaussian();
+            mutationStepSize[i] =  mutationStepSize[i] * (Math.pow(Math.E, 
+                    (getOverallLearningRate() * r.nextGaussian()) + 
+                            (getCoordinateLearningRate() * ithNormal)));
+            newIndividual[i] = individual[i] + (mutationStepSize[i] * ithNormal);
+        }
+        
+        return newIndividual;
     }
     
     //NOTE: We may not even need the two methods below since fitness is simply 
@@ -87,11 +104,11 @@ public class Maximizer_API {
         this.terminationCount = terminationCount;
     }
 
-    public double getnNumber() {
+    public int getnNumber() {
         return nNumber;
     }
 
-    public void setnNumber(double nNumber) {
+    public void setnNumber(int nNumber) {
         this.nNumber = nNumber;
     }
 
@@ -120,20 +137,28 @@ public class Maximizer_API {
         children = new double[21][2];
         mutationInitialStepSize = 1;
         terminationCount = 10000;
-        nNumber = 2.0; //initially the number of variables (x1 and x2)
+        nNumber = 2; //initially the number of variables (x1 and x2)
         overallLearningRate = 1.0 / Math.sqrt(2. * nNumber);
         coordinateLearningRate = 1.0 / Math.sqrt(2 * Math.sqrt(nNumber));
+        mutationStepSize = new double[nNumber];
+        for (int i = 0; i < nNumber; i++) {
+            mutationStepSize[i] = mutationInitialStepSize;
+        }
     }
     
     public Maximizer_API(int numParents, int numChildren, int n,
-            double mutationStepSize, int terminationNumber)
+            double mutationStSz, int terminationNumber)
     {
         parents = new double[numParents][n];
         children = new double[numChildren][n];
-        mutationInitialStepSize = mutationStepSize;
+        mutationInitialStepSize = mutationStSz;
         terminationCount = terminationNumber;
         nNumber = n;
         overallLearningRate = 1.0 / Math.sqrt(2. * nNumber);
         coordinateLearningRate = 1.0 / Math.sqrt(2 * Math.sqrt(nNumber));
+        mutationStepSize = new double[n];
+        for (int i = 0; i < n; i++) {
+            mutationStepSize[i] = mutationStSz;
+        }
     }
 }
