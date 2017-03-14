@@ -15,13 +15,15 @@ import java.util.Random;
 public class Maximizer_API {
     private double[][] parents;
     private double[][] children;
-    private double mutationInitialStepSize;
+    private final double mutationInitialStepSize;
     private double[] mutationStepSize;
     private int terminationCount;
     private int nNumber; // number of parameters (basically)
     private double overallLearningRate;
     private double coordinateLearningRate;
     
+    // Randomization generator
+    private final Random generatorRandom = new Random();
     
     // This is the main runner of the problem.
     // Returns a double array with the best parameter combinations.
@@ -29,11 +31,46 @@ public class Maximizer_API {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    // Initialization
+    // Set parents to randomized values between the given bounds:
+    // -3.0 <= x1 <= 12.0
+    // 4.0 <= x2 <= 6.0
+    private void init() {
+        // Initialize parent values:
+        for (int i = 0; i < parents.length; i++) {
+            parents[i][0] = (generatorRandom.nextDouble() * 
+                    (15.0 + Double.MIN_VALUE)) - 3.0;
+            parents[i][1] = (generatorRandom.nextDouble() * 
+                    (2.0 + Double.MIN_VALUE)) + 4.0;
+        }
+    }
+    
+    // Generate Offspring
+    // Description: generates the children using recombination and mutation
+    private void generateOffspring()
+    {
+        // Apply global recobmination to create all child sets
+        for (int i = 0; i < children.length; i++) {
+            children[i] = recombine(
+                    parents[generatorRandom.nextInt(parents.length)], 
+                    parents[generatorRandom.nextInt(parents.length)]);
+        }
+        
+        // Use uncorrelated mutations with n step sizes to modify each of the
+        // offspring produced via recombination (above).
+        for (int i = 0; i < children.length; i++) {
+            children[i] = mutate(children[i]);
+        }
+    }
+    
+    // Parent Selection
+    // Selects the parents from the resulting sets
+    
+    
     // Discrete recombination
     // Takes two parents and performs discrete recobmination
     private double[] recombine(double[] x, double[] y) {
-        Random r = new Random();
-        if (r.nextBoolean())
+        if (generatorRandom.nextBoolean())
             return x;
         else
             return y;
@@ -46,16 +83,16 @@ public class Maximizer_API {
     //page 76 in the book.
     private double[] mutate(double [] individual)
     {
-        Random r = new Random();
         double ithNormal;
         double[] newIndividual = new double[individual.length];
         //mutate each parameter
         for (int i = 0; i < getnNumber(); i++) {
-            ithNormal = r.nextGaussian();
+            ithNormal = generatorRandom.nextGaussian();
             mutationStepSize[i] =  mutationStepSize[i] * (Math.pow(Math.E, 
-                    (getOverallLearningRate() * r.nextGaussian()) + 
-                            (getCoordinateLearningRate() * ithNormal)));
-            newIndividual[i] = individual[i] + (mutationStepSize[i] * ithNormal);
+                    (getOverallLearningRate() * generatorRandom.nextGaussian()) 
+                            + (getCoordinateLearningRate() * ithNormal)));
+            newIndividual[i] = individual[i] + 
+                    (mutationStepSize[i] * ithNormal);
         }
         
         return newIndividual;
