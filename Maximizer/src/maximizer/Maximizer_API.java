@@ -5,6 +5,7 @@
  */
 package maximizer;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -65,7 +66,22 @@ public class Maximizer_API {
     
     // Parent Selection
     // Selects the parents from the resulting sets
-    
+    private void selectParents()
+    {
+        // Get the fitness of all the children
+        double [][]currentFitness = new double[children.length][2];
+        for (int i = 0; i < children.length; i++) {
+            currentFitness[i][0] = getFitness(children[i]);
+            currentFitness[i][1] = i;
+        }
+        // Sort the children by fitness
+        Arrays.sort(currentFitness);
+        
+        // Select the children with the best fitness to succeed the parents
+        for (int i = 0; i < parents.length; i++) {
+            parents[i] = children[(int)(currentFitness[i][1])];
+        }
+    }
     
     // Discrete recombination
     // Takes two parents and performs discrete recobmination
