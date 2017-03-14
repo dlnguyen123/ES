@@ -65,7 +65,7 @@ public class Maximizer_API {
     }
     
     // Parent Selection
-    // Selects the parents from the resulting sets
+    // Selects the parents from the resulting children
     private void selectParents()
     {
         // Get the fitness of all the children
