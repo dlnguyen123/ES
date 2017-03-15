@@ -5,9 +5,7 @@
  */
 package maximizer;
 
-import com.sun.org.apache.xerces.internal.xs.datatypes.XSDouble;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -98,7 +96,8 @@ public class Maximizer_API {
         
         // Select the children with the best fitness to succeed the parents
         for (int i = 0; i < parents.length; i++) {
-            parents[i] = children[(int)(currentFitness[i][1])];
+            parents[i] = children[
+                    (int)(currentFitness[children.length-i-1][1])];
         }
     }
     
@@ -130,16 +129,21 @@ public class Maximizer_API {
         double[] maxVal = {12.0, 6.0};
         
         // mutate each parameter
+        double oldStepSize;
         for (int i = 0; i < getnNumber(); i++) {
             // Force it to repeat until the mutation is within bounds
+            oldStepSize = mutationStepSize[i];
             do {
+                //Make sure to return to original if it needs to retry the step
+                mutationStepSize[i] = oldStepSize;
                 ithNormal = generatorRandom.nextGaussian();
                 mutationStepSize[i] =  mutationStepSize[i] * (Math.pow(Math.E, 
                         (getOverallLearningRate() * generatorRandom.nextGaussian()) 
                                 + (getCoordinateLearningRate() * ithNormal)));
                 newIndividual[i] = individual[i] + 
                         (mutationStepSize[i] * ithNormal);
-            } while (minVal[i] <= individual[i] && individual[i] <= maxVal[i]);
+            } while (!(minVal[i] <= newIndividual[i] 
+                    && newIndividual[i] <= maxVal[i]));
         }
         
         return newIndividual;

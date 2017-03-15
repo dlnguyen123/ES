@@ -7,10 +7,15 @@ package maximizer;
  *
  * @author Reuben Sonnenberg, Tung Nguyen, Dong Nguyen
  * 
+ * Author Name          Email Address
+ * Reuben Sonnenberg    rjsonnenberg@alaska.edu
+ * Tung Nguyen          ttnguyen4@alaska.edu
+ * Done Nguyen          dlnguyen@alaska.edu
+ * 
  * Programming Assignment #2 - Evolution Strategies
  * Goal: evolve a solution x = {x1, x2} that maximizes the following function:
  *      f(x1, x2) = 21.5 + x1 * sin(4*pi*x1) + x2 * sin(20*pi*x2)
- * subject to the constraints
+ * subject to the following constraints:
  *      -3.0 <= x1 <= 12.0 and 4.0 <= x2 <= 6.0     >*
  * 
  * Control parameters:
@@ -51,7 +56,7 @@ public class Maximizer {
         double[] solutionPair = myAPI.getBestSolution();
         
         //Print out the best solution after it has found it
-        System.out.println("Best solution: (");
+        System.out.print("Best solution: (");
         for (int i = 0; i < solutionPair.length - 1; i++) {
             System.out.print(solutionPair[i] + ", ");
         }
