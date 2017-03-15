@@ -200,7 +200,7 @@ public class Maximizer_API {
         return overallLearningRate;
     }
 
-    public void (double overallLearningRate) {
+    public void setOverallLearningRate(double overallLearningRate) {
         this.overallLearningRate = overallLearningRate;
     }
 
