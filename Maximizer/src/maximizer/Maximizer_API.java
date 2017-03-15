@@ -6,7 +6,6 @@
 package maximizer;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -14,10 +13,10 @@ import java.util.Random;
  * @author Reuben
  */
 public class Maximizer_API {
-    private double[][] parents;
-    private double[][] children;
+    private final double[][] parents;
+    private final double[][] children;
     private final double mutationInitialStepSize;
-    private double[] mutationStepSize;
+    private final double[] mutationStepSize;
     private int terminationCount;
     private int nNumber; // number of parameters (basically)
     private double overallLearningRate;
@@ -29,7 +28,24 @@ public class Maximizer_API {
     // This is the main runner of the problem.
     // Returns a double array with the best parameter combinations.
     public double[] getBestSolution() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        init();
+        
+        int fitIndex;
+        do {
+            generateOffspring();
+            selectParents();
+            fitIndex = getFittestIndex(parents);
+            
+            //Print best-of-run individual and resulting fitness
+            System.out.println(terminationCount + ": f(" + parents[fitIndex][0] 
+                    + ", " + parents[fitIndex][1] + ") = " + 
+                    getFitness(parents[fitIndex]));
+            
+            terminationCount--;
+        } while (terminationCount > 0);
+        
+        return parents[getFittestIndex(parents)];
     }
     
     // Initialization
@@ -38,10 +54,10 @@ public class Maximizer_API {
     // 4.0 <= x2 <= 6.0
     private void init() {
         // Initialize parent values:
-        for (int i = 0; i < parents.length; i++) {
-            parents[i][0] = (generatorRandom.nextDouble() * 
+        for (double[] parent : parents) {
+            parent[0] = (generatorRandom.nextDouble() * 
                     (15.0 + Double.MIN_VALUE)) - 3.0;
-            parents[i][1] = (generatorRandom.nextDouble() * 
+            parent[1] = (generatorRandom.nextDouble() * 
                     (2.0 + Double.MIN_VALUE)) + 4.0;
         }
     }
@@ -75,11 +91,13 @@ public class Maximizer_API {
             currentFitness[i][1] = i;
         }
         // Sort the children by fitness
-        Arrays.sort(currentFitness);
+        Arrays.sort(currentFitness, (double[] o1, double[] o2) -> 
+                Double.compare(o1[0], o2[0]));
         
         // Select the children with the best fitness to succeed the parents
         for (int i = 0; i < parents.length; i++) {
-            parents[i] = children[(int)(currentFitness[i][1])];
+            parents[i] = children[
+                    (int)(currentFitness[children.length-i-1][1])];
         }
     }
     
@@ -92,23 +110,40 @@ public class Maximizer_API {
             return y;
     }
     
-    //Uncorrelated mutation with n step sizes
-    //Input:    double array with n parameters
-    //Output:   modified input
-    //Accepts an individual and mutates each parameter using the methods from
-    //page 76 in the book.
+    // Uncorrelated mutation with n step sizes
+    // Input:    double array with n parameters
+    // Output:   modified input
+    // Accepts an individual and mutates each parameter using the methods from
+    // page 76 in the book.
+    //
+    // Need to make sure that the parameters remain within original bounds:
+    // -3.0 <= x1 <= 12.0
+    // 4.0 <= x2 <= 6.0
+    // For this instance, it is hard-coded; but could be made an instance var.
     private double[] mutate(double [] individual)
     {
         double ithNormal;
         double[] newIndividual = new double[individual.length];
-        //mutate each parameter
+        
+        double[] minVal = {-3.0, 4.0};
+        double[] maxVal = {12.0, 6.0};
+        
+        // mutate each parameter
+        double oldStepSize;
         for (int i = 0; i < getnNumber(); i++) {
-            ithNormal = generatorRandom.nextGaussian();
-            mutationStepSize[i] =  mutationStepSize[i] * (Math.pow(Math.E, 
-                    (getOverallLearningRate() * generatorRandom.nextGaussian()) 
-                            + (getCoordinateLearningRate() * ithNormal)));
-            newIndividual[i] = individual[i] + 
-                    (mutationStepSize[i] * ithNormal);
+            // Force it to repeat until the mutation is within bounds
+            oldStepSize = mutationStepSize[i];
+            do {
+                //Make sure to return to original if it needs to retry the step
+                mutationStepSize[i] = oldStepSize;
+                ithNormal = generatorRandom.nextGaussian();
+                mutationStepSize[i] =  mutationStepSize[i] * (Math.pow(Math.E, 
+                        (getOverallLearningRate() * generatorRandom.nextGaussian()) 
+                                + (getCoordinateLearningRate() * ithNormal)));
+                newIndividual[i] = individual[i] + 
+                        (mutationStepSize[i] * ithNormal);
+            } while (!(minVal[i] <= newIndividual[i] 
+                    && newIndividual[i] <= maxVal[i]));
         }
         
         return newIndividual;
@@ -120,14 +155,14 @@ public class Maximizer_API {
     //      computation time. We may only neet the fitness part.
     
     // Get fittest individual of current run (children)
-    private int getFittestIndex()
+    private int getFittestIndex(double [][] individuals)
     {
         int fittestIndex = 0;
         double bestFitnes = Double.MIN_VALUE;
         double currentFitness;
         
-        for (int i = 0; i < children.length; i++) {
-            currentFitness = getFitness(children[i]);
+        for (int i = 0; i < individuals.length; i++) {
+            currentFitness = getFitness(individuals[i]);
             if (currentFitness>bestFitnes)
             {
                 fittestIndex = i;
