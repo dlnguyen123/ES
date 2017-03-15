@@ -33,9 +33,18 @@ public class Maximizer_API {
 
         init();
         
+        int fitIndex;
         do {
             generateOffspring();
             selectParents();
+            fitIndex = getFittestIndex(parents);
+            
+            //Print best-of-run individual and resulting fitness
+            System.out.println(terminationCount + ": f(" + parents[fitIndex][0] 
+                    + ", " + parents[fitIndex][1] + ") = " + 
+                    getFitness(parents[fitIndex]));
+            
+            terminationCount--;
         } while (terminationCount > 0);
         
         return parents[getFittestIndex(parents)];
@@ -102,23 +111,35 @@ public class Maximizer_API {
             return y;
     }
     
-    //Uncorrelated mutation with n step sizes
-    //Input:    double array with n parameters
-    //Output:   modified input
-    //Accepts an individual and mutates each parameter using the methods from
-    //page 76 in the book.
+    // Uncorrelated mutation with n step sizes
+    // Input:    double array with n parameters
+    // Output:   modified input
+    // Accepts an individual and mutates each parameter using the methods from
+    // page 76 in the book.
+    //
+    // Need to make sure that the parameters remain within original bounds:
+    // -3.0 <= x1 <= 12.0
+    // 4.0 <= x2 <= 6.0
+    // For this instance, it is hard-coded; but could be made an instance var.
     private double[] mutate(double [] individual)
     {
         double ithNormal;
         double[] newIndividual = new double[individual.length];
-        //mutate each parameter
+        
+        double[] minVal = {-3.0, 4.0};
+        double[] maxVal = {12.0, 6.0};
+        
+        // mutate each parameter
         for (int i = 0; i < getnNumber(); i++) {
-            ithNormal = generatorRandom.nextGaussian();
-            mutationStepSize[i] =  mutationStepSize[i] * (Math.pow(Math.E, 
-                    (getOverallLearningRate() * generatorRandom.nextGaussian()) 
-                            + (getCoordinateLearningRate() * ithNormal)));
-            newIndividual[i] = individual[i] + 
-                    (mutationStepSize[i] * ithNormal);
+            // Force it to repeat until the mutation is within bounds
+            do {
+                ithNormal = generatorRandom.nextGaussian();
+                mutationStepSize[i] =  mutationStepSize[i] * (Math.pow(Math.E, 
+                        (getOverallLearningRate() * generatorRandom.nextGaussian()) 
+                                + (getCoordinateLearningRate() * ithNormal)));
+                newIndividual[i] = individual[i] + 
+                        (mutationStepSize[i] * ithNormal);
+            } while (minVal[i] <= individual[i] && individual[i] <= maxVal[i]);
         }
         
         return newIndividual;
@@ -136,7 +157,7 @@ public class Maximizer_API {
         double bestFitnes = Double.MIN_VALUE;
         double currentFitness;
         
-        for (int i = 0; i < children.length; i++) {
+        for (int i = 0; i < individuals.length; i++) {
             currentFitness = getFitness(individuals[i]);
             if (currentFitness>bestFitnes)
             {
@@ -179,7 +200,7 @@ public class Maximizer_API {
         return overallLearningRate;
     }
 
-    public void setOverallLearningRate(double overallLearningRate) {
+    public void (double overallLearningRate) {
         this.overallLearningRate = overallLearningRate;
     }
 
