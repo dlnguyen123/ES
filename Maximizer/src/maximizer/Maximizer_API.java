@@ -29,7 +29,15 @@ public class Maximizer_API {
     // This is the main runner of the problem.
     // Returns a double array with the best parameter combinations.
     public double[] getBestSolution() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        init();
+        
+        do {
+            generateOffspring();
+            selectParents();
+        } while (terminationCount > 0);
+        
+        return parents[getFittestIndex(parents)];
     }
     
     // Initialization
@@ -120,14 +128,14 @@ public class Maximizer_API {
     //      computation time. We may only neet the fitness part.
     
     // Get fittest individual of current run (children)
-    private int getFittestIndex()
+    private int getFittestIndex(double [][] individuals)
     {
         int fittestIndex = 0;
         double bestFitnes = Double.MIN_VALUE;
         double currentFitness;
         
         for (int i = 0; i < children.length; i++) {
-            currentFitness = getFitness(children[i]);
+            currentFitness = getFitness(individuals[i]);
             if (currentFitness>bestFitnes)
             {
                 fittestIndex = i;
