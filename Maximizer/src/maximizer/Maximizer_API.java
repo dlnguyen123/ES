@@ -5,7 +5,9 @@
  */
 package maximizer;
 
+import com.sun.org.apache.xerces.internal.xs.datatypes.XSDouble;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -82,7 +84,8 @@ public class Maximizer_API {
             currentFitness[i][1] = i;
         }
         // Sort the children by fitness
-        Arrays.sort(currentFitness);
+        Arrays.sort(currentFitness, (double[] o1, double[] o2) -> 
+                Double.compare(o1[0], o2[0]));
         
         // Select the children with the best fitness to succeed the parents
         for (int i = 0; i < parents.length; i++) {
