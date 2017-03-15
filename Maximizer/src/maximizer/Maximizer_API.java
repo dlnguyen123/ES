@@ -6,7 +6,6 @@
 package maximizer;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Random;
 
 /**
@@ -14,10 +13,10 @@ import java.util.Random;
  * @author Reuben
  */
 public class Maximizer_API {
-    private double[][] parents;
-    private double[][] children;
+    private final double[][] parents;
+    private final double[][] children;
     private final double mutationInitialStepSize;
-    private double[] mutationStepSize;
+    private final double[] mutationStepSize;
     private int terminationCount;
     private int nNumber; // number of parameters (basically)
     private double overallLearningRate;
@@ -46,10 +45,10 @@ public class Maximizer_API {
     // 4.0 <= x2 <= 6.0
     private void init() {
         // Initialize parent values:
-        for (int i = 0; i < parents.length; i++) {
-            parents[i][0] = (generatorRandom.nextDouble() * 
+        for (double[] parent : parents) {
+            parent[0] = (generatorRandom.nextDouble() * 
                     (15.0 + Double.MIN_VALUE)) - 3.0;
-            parents[i][1] = (generatorRandom.nextDouble() * 
+            parent[1] = (generatorRandom.nextDouble() * 
                     (2.0 + Double.MIN_VALUE)) + 4.0;
         }
     }
