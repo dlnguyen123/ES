@@ -1,0 +1,50 @@
+CSCE A412 - Evolutionary Programming
+Programming Assignment 2
+
+Team Members:
+Name	Reuben Sonnenberg	Dong Nguyen	Tung Nguyen
+E-mail	rjsonnenberg@alaska.edu	dlnguyen@alaska.edu	ttnguyen4@alaska.edu
+
+
+Results:
+NOTE: All mutations can flip more than one “bit” at a time. Crossovers were exclusively single-point.
+μ	λ	σ0	TC	x1	x2	f(x1, x2)
+3	21	1	10000	11.625544704113977	5.9250427506950105	39.05029373271072
+4	25	.9	10000	11.625544703651169	5.925042751507538	39.05029373271072
+10	10	1	10000	11.61470806140494	5.414457696412679	37.28712967437972
+10	100	1	10000	11.625544703452833	5.925042751106548	39.05029373271072
+*100	10	1	10000	10.594330612510795	4.333085595538829	35.10303545534108
+10	50	.5	10000	11.625544703257004	5.925042749286994	39.050293732710685
+10	50	2	10000	11.625544703439274	5.925042751471487	39.05029373271072
+25	200	.25	50000	11.625544704062095	5.925042751246557	39.05029373271072
+5	200	.01	50000	11.62554470351046	5.925042750605753	39.05029373271072
+5	200	1	100	11.625544703069066	5.926398789000195	39.028796970152584
+
+*The best-of-run results from this run are sort of odd because it converged rather quickly but had difficulty, probably due to the disproportionate parent-child ratio. This would normally never happen in normal genetic algorithms, so I forced the algorithm to duplicate the children repeatedly until all parent slots were full. This led to extreme stagnation.
+
+Summary of Results
+The results appear to agree and it looks like there is a very close agreement of the algorithms about which parameters are the best. The highest fitness achieved and the corresponding different values are given below:
+x1	x2	f(x1, x2)
+11.625544704113977	5.9250427506950105	39.05029373271072
+11.625544703651169	5.925042751507538	39.05029373271072
+11.625544703452833	5.925042751106548	39.05029373271072
+11.625544703439274	5.925042751471487	39.05029373271072
+11.625544704062095	5.925042751246557	39.05029373271072
+11.62554470351046	5.925042750605753	39.05029373271072
+
+Taking these values, it appears that the parameters agree to the following:
+X1: 11.62554470
+X2: 5.92504275
+
+Each time, the parameters appeared to converge well before the termination count was complete. These results closely agree with WolframAlpha (full computation took too long for complete results, but below is the query string and the results of the best max within the limited result set):
+https://www.wolframalpha.com/input/?i=max%7B21.5+%2B+(x+*+sin(4*pi*x))+%2B+(y+*+sin(20*pi*y))%7D+where+-3%3C%3Dx%3C%3D12+and+4%3C%3Dy%3C%3D6 
+max{21.5 + (x * sin(4*pi*x)) + (y * sin(20*pi*y))} where -3<=x<=12 and 4<=y<=6
+
+max{21.5 + x sin(4 π x) + y sin(20 π y)|-3<=x<=12 ∧ 4<=y<=6}≈38.4503 at (x, y)≈(11.1256, 5.82504)
+
+I plugged both values into Excel and it appears that our program found a better global maximum than WolframAlpha (though WolframAlpha told me that the provided results were only a small subset due to the computing power necessary to return all global maximums within the given scope).
+
+x	y	f(x, y)	
+11.62554470411390	5.92504275069501	39.05029373271070	OurAlgorithm
+11.12560000000000	5.82504000000000	38.45030536525920	WolframAlpha
+
